@@ -17,5 +17,5 @@ public class User
 
     [Required]
     [StringLength(64), MinLength(8)]
-    public required string Password { get; init; }
+    public required string Password { get; set; } 
 }
