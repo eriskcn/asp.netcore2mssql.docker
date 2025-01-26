@@ -12,10 +12,10 @@ public class AuthController(ApplicationDbContext context) : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRegisterModel model)
     {
-        if (await context.Users
-                .AnyAsync(user => user.Username == model.Username))
+        var existingUser = await context.Users.FirstOrDefaultAsync(user => user.Username == model.Username);
+        if (existingUser != null)
         {
-            return BadRequest("Username is already exists.");
+            return BadRequest("Username already exists");
         }
 
         var user = new User
@@ -24,7 +24,7 @@ public class AuthController(ApplicationDbContext context) : ControllerBase
             Password = model.Password,
         };
 
-        context.Users.Add(user);
+        await context.Users.AddAsync(user);
         await context.SaveChangesAsync();
 
         return Ok(user);
